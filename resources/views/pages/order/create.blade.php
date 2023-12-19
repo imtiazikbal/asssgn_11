@@ -15,7 +15,7 @@
             @if(Session::has('success'))
                 <p class="alert alert-info">{{ Session::get('success') }}</p>
                 @endif
-            <form action="{{ route('order.store', $product->id) }}" method="POST">
+            <form action="{{ route('order.store',request()->product_id) }}" method="post">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ request()->product_id}}">
                 <div class="mb-3">

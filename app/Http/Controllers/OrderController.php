@@ -16,40 +16,62 @@ class OrderController extends Controller
     }
   public function store(Request $request, $id)
   {
-    dd($request->all());
+    
          
    
-            // $this->validate($request, [
-            //     'product_title' => 'required',
-            //     'product_price' => 'required',
-            //     'product_quantity' => 'required',
+            $this->validate($request, [
+                'product_title' => 'required',
+                'product_price' => 'required',
+                'product_quantity' => 'required',
 
-            // ]);
+            ]);
 
-            // //update price and quantity in products table
+         
 
-            // $countQty = DB::table('products')->count('product_quantity');
-            
-            // $newQty = $request->product_quantity - $countQty;
-            
-            // DB::table('products')->where('id',$id)->update([
-
-            //     'product_quantity' => $newQty
-            // ]);
-
-            // //insert into orders table
-            // DB::table('orders')->insert([
+            //insert into orders table
+            DB::table('orders')->insert([
                 
-            //     'price' => $request->product_price,
-            //     'quantity' => $request->product_quantity,
-            //     'product_id' => $request->product_id
-            // ]);
+                'price' => $request->product_price,
+                'quantity' => $request->product_quantity,
+                'product_id' => $request->product_id
+            ]);
+            DB::table('products')
+            ->where('id','=',$id)
+            ->decrement('product_quantity',$request->input('product_quantity'));
+
+        DB::table('products')
+            ->where('product_quantity','=',0)
+            ->delete();
             
-            // return redirect()->back()->with('success', 'Order created successfully.');
+            return redirect()->back()->with('success', 'Order created successfully.');
             
-           
-            
-            
-    
+  }
+  public function view(){
+    $today=   DB::table('orders')
+    ->whereDate('created_at','=',today())
+    ->sum(DB::raw('price * Quantity '));
+
+$yesterday= DB::table('orders')
+->whereDate('created_at','=',today()->subDay())
+->sum(DB::raw('price * Quantity'));
+
+$thisMonth= DB::table('orders')
+->whereMonth('created_at','=',now()->month)
+->sum(DB::raw('price * Quantity'));
+
+$lastMonth=DB::table('orders')
+->whereMonth('created_at','=',now()->subMonth()->month)
+->sum(DB::raw('price * Quantity'));
+
+
+return view('pages.dashboard',[
+
+  'today'=>$today,
+  'yesterday'=>$yesterday,
+  'thisMonth'=> $thisMonth,
+  'lastMonth'=>$lastMonth
+
+
+]);
   }
 }

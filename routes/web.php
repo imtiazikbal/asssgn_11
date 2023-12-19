@@ -2,6 +2,7 @@
 
 use App\Models\Order;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
 
@@ -28,8 +29,10 @@ Route::group(['prefix' => 'admin'], function () {
     Route::delete('/product/destroy/{id}',[ProductController::class,'destroy'])->name('product.destroy');
     Route::get('/order/',[ProductController::class,'orderView'])->name('product.order');
    
-    Route::get('/orderpage',[Order::class,'create'])->name('order.create');
+    Route::get('/orderpage',[OrderController::class,'create'])->name('order.create');
 
-    Route::post('/order/{id}',[Order::class,'store'])->name('order.store');
+    Route::post('/order/{id}',[OrderController::class,'store'])->name('order.store');
+    Route::get('/dashboard',[OrderController::class,'view'])->name('order.dashboard');
+    
 
 });
